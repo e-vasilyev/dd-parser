@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -9,9 +10,25 @@ import (
 var config = viper.NewWithOptions(viper.EnvKeyReplacer(strings.NewReplacer(".", "_")))
 
 func initConfig() {
+	// Настройки переменных среды
 	config.SetEnvPrefix("DDP_")
 	config.AutomaticEnv()
-
+	// Настройки базы данных
+	config.SetDefault("database.name", "dd_parser")
+	config.SetDefault("database.host", "localhost")
+	config.SetDefault("database.port", "5432")
+	config.SetDefault("database.username", "postgres")
+	config.SetDefault("database.password", "postgres")
+	config.Set("database.url", fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s",
+		config.GetString("database.username"),
+		config.GetString("database.password"),
+		config.GetString("database.host"),
+		config.GetString("database.port"),
+		config.GetString("database.name"),
+	))
+	// Настройки источника
 	config.SetDefault("source.type", "local")
 	config.SetDefault("source.local.rootPath", "source")
+
 }

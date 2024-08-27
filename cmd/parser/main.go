@@ -8,23 +8,35 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-// fatalError сообщает об ошибке и выходит из приложения
-func fatalError(e error) {
-	slog.Error("Фатальная ошибка. Выход из приложения", slog.String("error", e.Error()))
-	os.Exit(1)
-}
+var pdb *PDB = &PDB{pool: nil}
 
 func main() {
 	// Инициализация логирования
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	slog.SetDefault(logger)
 
 	// Инициализация конфигурации
 	initConfig()
 
-	// Подготовка источников и базы данных
-	if err := prepare(); err != nil {
-		fatalError(err)
+	// Подготовка источников
+	if err := prepareSource(); err != nil {
+		slog.Error("Ошибка при подготовке источника данных. Выход из приложения", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	// Подключение к БД
+	pool, err := connectToDB()
+	if err != nil {
+		slog.Error("Ошибка при подключении к базе данных. Выход из приложения", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pdb.pool = pool
+	defer pdb.pool.Close()
+
+	// Миграция базы данных
+	if err := pdb.migration(); err != nil {
+		slog.Error("Ошибка при подключении миграции базы данных. Выход из приложения", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 
 	// Запуск задач для работы с файлами

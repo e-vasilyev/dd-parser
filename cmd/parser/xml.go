@@ -8,7 +8,7 @@ import (
 // DiaDocXML - основное описание структуры XML файла
 type DiaDocXML struct {
 	XMLName  xml.Name          `xml:"Файл"`
-	File     string            `xml:"ИдФайл,attr"`
+	FileId   string            `xml:"ИдФайл,attr"`
 	FormVer  string            `xml:"ВерсФорм,attr"`
 	ProgVer  string            `xml:"ВерсПрог,attr"`
 	Document DiaDocDocumentXML `xml:"Документ"`
