@@ -5,6 +5,8 @@ go 1.23.0
 require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/jackc/pgx/v5 v5.6.0
+	github.com/minio/minio-go/v7 v7.0.76
+	github.com/pressly/goose/v3 v3.21.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/text v0.17.0
 )
@@ -24,10 +26,8 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.76 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
-	github.com/pressly/goose/v3 v3.21.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
