@@ -11,8 +11,9 @@ var config = viper.NewWithOptions(viper.EnvKeyReplacer(strings.NewReplacer(".", 
 
 func initConfig() {
 	// Настройки переменных среды
-	config.SetEnvPrefix("DDP_")
+	config.SetEnvPrefix("DDP")
 	config.AutomaticEnv()
+
 	// Настройки базы данных
 	config.SetDefault("database.name", "dd_parser")
 	config.SetDefault("database.host", "localhost")
@@ -27,8 +28,18 @@ func initConfig() {
 		config.GetString("database.port"),
 		config.GetString("database.name"),
 	))
-	// Настройки источника
+
+	// Настройки источников
 	config.SetDefault("source.type", "local")
+
+	// Настройки локального источника
 	config.SetDefault("source.local.rootPath", "source")
 
+	// Настройки s3
+	config.SetDefault("source.s3.bucketName", "diadoc")
+	config.SetDefault("source.s3.endpoint", "localhost:9000")
+	config.SetDefault("source.s3.password", "password")
+	config.SetDefault("source.s3.user", "root")
+	config.SetDefault("source.s3.useSSL", false)
+	config.SetDefault("source.s3.useRoot", true)
 }

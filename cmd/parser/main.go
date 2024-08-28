@@ -3,16 +3,30 @@ package main
 import (
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-co-op/gocron"
 )
 
-var pdb *PDB = &PDB{pool: nil}
+var (
+	logLevelString string = os.Getenv("DDP_LOG_LEVEL")
+	pdb            *PDB   = &PDB{pool: nil}
+	s3             *S3    = &S3{client: nil}
+)
 
 func main() {
 	// Инициализация логирования
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	logLevel := slog.LevelInfo
+	switch strings.ToLower(logLevelString) {
+	case "debug":
+		logLevel = slog.LevelDebug
+	case "warn":
+		logLevel = slog.LevelWarn
+	case "error":
+		logLevel = slog.LevelError
+	}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: logLevel}))
 	slog.SetDefault(logger)
 
 	// Инициализация конфигурации
