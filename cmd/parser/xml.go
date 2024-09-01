@@ -16,10 +16,11 @@ type DiaDocXML struct {
 
 // DiaDocDocumentXML - описание раздела Документ
 type DiaDocDocumentXML struct {
-	XMLName  xml.Name           `xml:"Документ"`
-	Date     DiaDocDocumentDate `xml:"ДатаИнфПр,attr"`
-	Seller   string             `xml:"НаимЭконСубСост,attr"`
-	Products []DiaDocProductXML `xml:"ТаблСчФакт>СведТов"`
+	XMLName  xml.Name                  `xml:"Документ"`
+	Date     DiaDocDocumentDate        `xml:"ДатаИнфПр,attr"`
+	Seller   string                    `xml:"НаимЭконСубСост,attr"`
+	Invoice  DiadockDocumentInvoiceXML `xml:"СвСчФакт"`
+	Products []DiaDocProductXML        `xml:"ТаблСчФакт>СведТов"`
 }
 
 // DiaDocDocumentDate - описывает дату документа
@@ -36,6 +37,11 @@ func (dd *DiaDocDocumentDate) UnmarshalXMLAttr(attr xml.Attr) error {
 	}
 	*dd = DiaDocDocumentDate{date}
 	return nil
+}
+
+type DiadockDocumentInvoiceXML struct {
+	XMLName xml.Name `xml:"СвСчФакт"`
+	Number  string   `xml:"НомерСчФ,attr"`
 }
 
 // - описание позиции товара

@@ -62,8 +62,8 @@ func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 	case errors.Is(err, pgx.ErrNoRows):
 		_, err := pdb.pool.Exec(
 			context.Background(),
-			"INSERT INTO diadoc_files (id, form_version, prog_version, complited, document_date, seller, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-			d.FileId, d.FormVer, d.ProgVer, false, d.Document.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
+			"INSERT INTO diadoc_files (id, form_version, prog_version, complited, invoce_number, document_date, seller, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+			d.FileId, d.FormVer, d.ProgVer, false, d.Document.Invoice.Number, d.Document.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
 			slog.Error("Ошибка при записи документа в базу данных", slog.String("error", err.Error()))
@@ -99,8 +99,8 @@ func (pdb *PDB) insertDocumentTable(d *DiaDocXML) error {
 
 		_, err := tx.Exec(
 			context.Background(),
-			"INSERT INTO diadoc_products (id, name, price, file_id, timestamp) VALUES ($1, $2, $3, $4, $5)",
-			p.ExtInfo.Code, p.Name, price, d.FileId, time.Now().UTC().Format("2006-01-02 03:04:05"),
+			"INSERT INTO diadoc_products (id, name, count, price, file_id, timestamp) VALUES ($1, $2, $3, $4, $5, $6)",
+			p.ExtInfo.Code, p.Name, p.Count, price, d.FileId, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
 			slog.Error("Ошибка записи товара в базу данных", slog.String("error", err.Error()))
