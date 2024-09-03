@@ -27,7 +27,7 @@ go build -v -o dd-parser ./cmd/parser
 | DDP_SOURCE_S3_PASSWORD    | password              | Пароль пользователя s3 (SecretAccessKey)                                           |
 | DDP_SOURCE_S3_USESSL      | false                 | Использовать доступ по SSL                                                         |
 | DDP_SOURCE_S3_USEROOT     | false                 | Используется учетная записть root. Если true, то bucket будет создан автоматически |
-| DDP_LOG_LEVEL          | Info                  | Уровень логирования. Доступные уровни: Info, Warn, Error, Debug                    |
+| DDP_LOG_LEVEL             | Info                  | Уровень логирования. Доступные уровни: Info, Warn, Error, Debug                    |
 
 ## Использование
 

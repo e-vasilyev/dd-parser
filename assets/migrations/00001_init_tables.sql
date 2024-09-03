@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS diadoc_products (
     id varchar(10),
     name varchar(256) NOT NULL,
     count int NOT NULL,
-    price numeric NOT NULL,
+    price numeric(8, 2) NOT NULL,
     file_id varchar(256),
     timestamp timestamp NOT NULL,
     PRIMARY KEY (id, file_id),
