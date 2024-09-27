@@ -20,7 +20,7 @@ func prepareLocalDirs() error {
 
 	slog.Info("Выбран локальный тип источника")
 
-	rootPath := config.GetString("source.local.rootPath")
+	rootPath := config.GetString("source.local.root_path")
 	for _, path := range paths {
 		if err := createLocalDir(filepath.Join(rootPath, path)); err != nil {
 			return err
@@ -38,7 +38,7 @@ func prepareLocalDirs() error {
 
 // parseLocalZipFiles читает и распаковывает найденные zip файлы из локальной директории
 func parseLocalZipFiles() error {
-	return filepath.Walk(filepath.Join(config.GetString("source.local.rootPath"), "zip"), func(path string, info fs.FileInfo, err error) error {
+	return filepath.Walk(filepath.Join(config.GetString("source.local.root_path"), "zip"), func(path string, info fs.FileInfo, err error) error {
 		if err == nil && filepath.Ext(path) == ".zip" {
 			slog.Info(fmt.Sprintf("Найден архив %s", info.Name()))
 
@@ -51,12 +51,12 @@ func parseLocalZipFiles() error {
 				files.Close()
 				if errCount > 0 {
 					slog.Warn("В архиве есть ошибочные документы. Перенос архива в дриеткорию error")
-					if err := os.Rename(path, filepath.Join(config.GetString("source.local.rootPath"), "error", info.Name())); err != nil {
+					if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "error", info.Name())); err != nil {
 						slog.Error("Ошибка при переносе архива в error", slog.String("error", err.Error()))
 					}
 				} else {
 					slog.Info(fmt.Sprintf("Архив %s успешно обработан", info.Name()))
-					if err := os.Rename(path, filepath.Join(config.GetString("source.local.rootPath"), "done", info.Name())); err != nil {
+					if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "done", info.Name())); err != nil {
 						slog.Error("Ошибка при переносе архива в done", slog.String("error", err.Error()))
 					}
 				}

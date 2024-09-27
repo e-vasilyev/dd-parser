@@ -27,7 +27,7 @@ func prepareS3() error {
 
 	client, err := minio.New(config.GetString("source.s3.endpoint"), &minio.Options{
 		Creds:  credentials.NewStaticV4(config.GetString("source.s3.user"), config.GetString("source.s3.password"), ""),
-		Secure: config.GetBool("source.s3.useSSL"),
+		Secure: config.GetBool("source.s3.use_ssl"),
 	})
 
 	if err != nil {
@@ -35,9 +35,9 @@ func prepareS3() error {
 	}
 
 	s3.client = client
-	s3.bucketName = config.GetString("source.s3.bucketName")
+	s3.bucketName = config.GetString("source.s3.bucket_name")
 
-	if ok := config.GetBool("source.s3.useRoot"); ok {
+	if ok := config.GetBool("source.s3.use_root"); ok {
 		slog.Debug(fmt.Sprintf("Создание бакета %s", config.GetString("source.s3.baketName")))
 
 		if err := s3.createBucket(s3.bucketName); err != nil {
@@ -77,7 +77,7 @@ func parseS3ZipFiles() error {
 
 						if errCount > 0 {
 							slog.Warn("В архиве есть ошибочные документы. Перенос архива в дриеткорию error")
-							// if err := os.Rename(path, filepath.Join(config.GetString("source.local.rootPath"), "error", info.Name())); err != nil {
+							// if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "error", info.Name())); err != nil {
 							// 	slog.Error("Ошибка при переносе архива в error", slog.String("error", err.Error()))
 							// }
 						} else {

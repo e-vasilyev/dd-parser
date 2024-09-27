@@ -33,13 +33,13 @@ func initConfig() {
 	config.SetDefault("source.type", "local")
 
 	// Настройки локального источника
-	config.SetDefault("source.local.rootPath", "source")
+	config.SetDefault("source.local.root_path", "source")
 
 	// Настройки s3
-	config.SetDefault("source.s3.bucketName", "diadoc")
+	config.SetDefault("source.s3.bucket_name", "diadoc")
 	config.SetDefault("source.s3.endpoint", "localhost:9000")
 	config.SetDefault("source.s3.password", "password")
 	config.SetDefault("source.s3.user", "root")
-	config.SetDefault("source.s3.useSSL", false)
-	config.SetDefault("source.s3.useRoot", true)
+	config.SetDefault("source.s3.use_ssl", false)
+	config.SetDefault("source.s3.use_root", true)
 }
