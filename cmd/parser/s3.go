@@ -78,7 +78,7 @@ func parseS3ZipFiles() error {
 						if errCount > 0 {
 							slog.Warn("В архиве есть ошибочные документы. Перенос архива в дриеткорию error")
 							// if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "error", info.Name())); err != nil {
-							// 	slog.Error("Ошибка при переносе архива в error", slog.String("error", err.Error()))
+							// 	slog.Error(fmt.Sprintf("Ошибка при переносе архива в error: %s", err.Error()))
 							// }
 						} else {
 							slog.Info(fmt.Sprintf("Архив %s успешно обработан", readObjectInfo.Key))
@@ -88,24 +88,24 @@ func parseS3ZipFiles() error {
 								minio.CopyDestOptions{Bucket: s3.bucketName, Object: strings.Replace(readObjectInfo.Key, "zip", "done", 1)},
 								minio.CopySrcOptions{Bucket: s3.bucketName, Object: readObjectInfo.Key},
 							); err != nil {
-								slog.Error("Ошибка при переносе архива в done", slog.String("error", err.Error()))
+								slog.Error(fmt.Sprintf("Ошибка при переносе архива в done: %s", err.Error()))
 							} else {
 								if err := s3.client.RemoveObject(
 									context.Background(), s3.bucketName, readObjectInfo.Key, minio.RemoveObjectOptions{},
 								); err != nil {
-									slog.Error("Ошибка при удалении архива в done", slog.String("error", err.Error()))
+									slog.Error(fmt.Sprintf("Ошибка при удалении архива в done: %s", err.Error()))
 								}
 							}
 						}
 					} else {
-						slog.Error("Ошибка при чтении архива", slog.String("error", err.Error()))
+						slog.Error(fmt.Sprintf("Ошибка при чтении архива: %s", err.Error()))
 					}
 				} else {
-					slog.Error("Ошибка при получении информации по архиву", slog.String("error", err.Error()))
+					slog.Error(fmt.Sprintf("Ошибка при получении информации по архиву: %s", err.Error()))
 				}
 				readObject.Close()
 			} else {
-				slog.Error("Ошибка при получении архива", slog.String("error", err.Error()))
+				slog.Error(fmt.Sprintf("Ошибка при получении архива: %s", err.Error()))
 			}
 		}
 	}

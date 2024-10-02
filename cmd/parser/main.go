@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -34,14 +35,14 @@ func main() {
 
 	// Подготовка источников
 	if err := prepareSource(); err != nil {
-		slog.Error("Ошибка при подготовке источника данных. Выход из приложения", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Критическая ошибка при подготовке источника данных: %s", err.Error()))
 		os.Exit(1)
 	}
 
 	// Подключение к БД
 	pool, err := connectToDB()
 	if err != nil {
-		slog.Error("Ошибка при подключении к базе данных. Выход из приложения", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Критическая ошибка при подключении к базе данных: %s", err.Error()))
 		os.Exit(1)
 	}
 	pdb.pool = pool
@@ -49,7 +50,7 @@ func main() {
 
 	// Миграция базы данных
 	if err := pdb.migration(); err != nil {
-		slog.Error("Ошибка при подключении миграции базы данных. Выход из приложения", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Критическая ошибка при подключении миграции базы данных: %s", err.Error()))
 		os.Exit(1)
 	}
 

@@ -56,7 +56,7 @@ func manageFilesInZip(zFiles []*zip.File) int {
 	for _, file := range zFiles {
 		document, err := parseXML(file)
 		if err != nil {
-			slog.Error("Ошибка разбора XML", slog.String("error", err.Error()))
+			slog.Error(fmt.Sprintf("Ошибка разбора XML: %s", err.Error()))
 			countErr++
 		} else {
 			slog.Debug(fmt.Sprintf("Разбор документа %s успешно завершен", file.Name))

@@ -66,7 +66,7 @@ func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 			d.FileId, d.FormVer, d.ProgVer, false, d.Document.Invoice.Number, d.Document.Invoice.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
-			slog.Error("Ошибка при записи документа в базу данных", slog.String("error", err.Error()))
+			slog.Error(fmt.Sprintf("Ошибка при записи документа в базу данных: %s", err.Error()))
 			return err
 		} else {
 			slog.Debug("Создана запись в БД для документа")
@@ -77,7 +77,7 @@ func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 	case err == nil && complited:
 		slog.Warn(fmt.Sprintf("Документ %s обработан ранее. Будет проущен", d.FileId))
 	default:
-		slog.Error("Ошибка получения id документа", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Ошибка получения id документа: %s", err.Error()))
 		return err
 	}
 	return nil
@@ -88,7 +88,7 @@ func (pdb *PDB) insertDocumentTable(d *DiaDocXML) error {
 
 	tx, err := pdb.pool.Begin(context.Background())
 	if err != nil {
-		slog.Error("Ошибка при создании транзакции", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Ошибка при создании транзакции: %s", err.Error()))
 		return err
 	}
 
@@ -103,17 +103,17 @@ func (pdb *PDB) insertDocumentTable(d *DiaDocXML) error {
 			p.ExtInfo.Code, p.Name, p.Count, price, d.FileId, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
-			slog.Error("Ошибка записи товара в базу данных", slog.String("error", err.Error()))
+			slog.Error(fmt.Sprintf("Ошибка записи товара в базу данных: %s", err.Error()))
 			return err
 		}
 	}
 	_, err = tx.Exec(context.Background(), "UPDATE diadoc_files SET complited=$2 WHERE id=$1", d.FileId, true)
 	if err != nil {
-		slog.Error("Ошибка при обновлении документа в базе данных", slog.String("error", err.Error()))
+		slog.Error(fmt.Sprintf("Ошибка при обновлении документа в базе данных: %s", err.Error()))
 		return err
 	} else {
 		if err := tx.Commit(context.Background()); err != nil {
-			slog.Error("Ошибка при коммите изменений", slog.String("error", err.Error()))
+			slog.Error(fmt.Sprintf("Ошибка при коммите изменений: %s", err.Error()))
 			return err
 		} else {
 			slog.Info(fmt.Sprintf("Документ %s успешно добавлен в БД", d.FileId))

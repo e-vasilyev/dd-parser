@@ -52,16 +52,16 @@ func parseLocalZipFiles() error {
 				if errCount > 0 {
 					slog.Warn("В архиве есть ошибочные документы. Перенос архива в дриеткорию error")
 					if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "error", info.Name())); err != nil {
-						slog.Error("Ошибка при переносе архива в error", slog.String("error", err.Error()))
+						slog.Error(fmt.Sprintf("Ошибка при переносе архива в error: %s", err.Error()))
 					}
 				} else {
 					slog.Info(fmt.Sprintf("Архив %s успешно обработан", info.Name()))
 					if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "done", info.Name())); err != nil {
-						slog.Error("Ошибка при переносе архива в done", slog.String("error", err.Error()))
+						slog.Error(fmt.Sprintf("Ошибка при переносе архива в done: %s", err.Error()))
 					}
 				}
 			} else {
-				slog.Error("Ошибка при чтении архива", slog.String("error", err.Error()))
+				slog.Error(fmt.Sprintf("Ошибка при чтении архива: %s", err.Error()))
 			}
 		}
 
