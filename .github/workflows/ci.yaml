@@ -16,4 +16,4 @@ jobs:
       
       - name: Build go
         run: |
-          go build ./cmd/parser
+          go build -v ./cmd/parser

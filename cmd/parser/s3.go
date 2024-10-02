@@ -77,24 +77,15 @@ func parseS3ZipFiles() error {
 
 						if errCount > 0 {
 							slog.Warn("В архиве есть ошибочные документы. Перенос архива в дриеткорию error")
-							// if err := os.Rename(path, filepath.Join(config.GetString("source.local.root_path"), "error", info.Name())); err != nil {
-							// 	slog.Error(fmt.Sprintf("Ошибка при переносе архива в error: %s", err.Error()))
-							// }
+
+							if err := s3.moveObject(readObjectInfo.Key, strings.Replace(readObjectInfo.Key, "zip", "error", 1)); err != nil {
+								slog.Error(fmt.Sprintf("Ошибка при переносе архива в error: %s", err.Error()))
+							}
 						} else {
 							slog.Info(fmt.Sprintf("Архив %s успешно обработан", readObjectInfo.Key))
 
-							if _, err := s3.client.CopyObject(
-								context.Background(),
-								minio.CopyDestOptions{Bucket: s3.bucketName, Object: strings.Replace(readObjectInfo.Key, "zip", "done", 1)},
-								minio.CopySrcOptions{Bucket: s3.bucketName, Object: readObjectInfo.Key},
-							); err != nil {
+							if err := s3.moveObject(readObjectInfo.Key, strings.Replace(readObjectInfo.Key, "zip", "done", 1)); err != nil {
 								slog.Error(fmt.Sprintf("Ошибка при переносе архива в done: %s", err.Error()))
-							} else {
-								if err := s3.client.RemoveObject(
-									context.Background(), s3.bucketName, readObjectInfo.Key, minio.RemoveObjectOptions{},
-								); err != nil {
-									slog.Error(fmt.Sprintf("Ошибка при удалении архива в done: %s", err.Error()))
-								}
 							}
 						}
 					} else {
@@ -125,5 +116,23 @@ func (s *S3) createBucket(name string) error {
 
 	slog.Info(fmt.Sprintf("Создан бакет %s", name))
 
+	return nil
+}
+
+// moveObject переносит объект
+func (s *S3) moveObject(src, dest string) error {
+	if _, err := s.client.CopyObject(
+		context.Background(),
+		minio.CopyDestOptions{Bucket: s.bucketName, Object: dest},
+		minio.CopySrcOptions{Bucket: s.bucketName, Object: src},
+	); err != nil {
+		return err
+	} else {
+		if err := s.client.RemoveObject(
+			context.Background(), s3.bucketName, src, minio.RemoveObjectOptions{},
+		); err != nil {
+			return err
+		}
+	}
 	return nil
 }
