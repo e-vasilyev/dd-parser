@@ -1,0 +1,27 @@
+FROM golang:1.23.0-alpine3.20 AS build
+
+WORKDIR /app
+
+COPY . .
+
+RUN go build -v -o dd-parser ./cmd/parser
+
+FROM alpine:3.20.2
+
+ARG USERNMAE=app
+ARG USER_UID=1001
+ARG USER_GID=${USER_UID}
+
+RUN apk add --no-cache tzdata
+
+RUN addgroup -g ${USER_GID} -S ${USERNMAE}\
+    && adduser -u ${USER_UID} -G ${USERNMAE} -S ${USERNMAE}\
+    -H
+
+USER ${USERNMAE}
+
+WORKDIR /app
+
+COPY --from=build /app/dd-parser ./dd-parser
+
+CMD ["/app/dd-parser"]
