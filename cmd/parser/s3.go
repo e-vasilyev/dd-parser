@@ -127,12 +127,13 @@ func (s *S3) moveObject(src, dest string) error {
 		minio.CopySrcOptions{Bucket: s.bucketName, Object: src},
 	); err != nil {
 		return err
-	} else {
-		if err := s.client.RemoveObject(
-			context.Background(), s3.bucketName, src, minio.RemoveObjectOptions{},
-		); err != nil {
-			return err
-		}
 	}
+
+	if err := s.client.RemoveObject(
+		context.Background(), s3.bucketName, src, minio.RemoveObjectOptions{},
+	); err != nil {
+		return err
+	}
+
 	return nil
 }

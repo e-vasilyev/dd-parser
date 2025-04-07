@@ -1,4 +1,4 @@
-FROM golang:1.23.0-alpine3.20 AS build
+FROM golang:1.23.3-alpine3.20 AS build
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN go build -v -o dd-parser ./cmd/parser
 
-FROM alpine:3.20.2
+FROM alpine:3.20.3
 
 ARG USERNMAE=app
 ARG USER_UID=1001

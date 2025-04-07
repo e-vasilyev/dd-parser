@@ -57,25 +57,26 @@ func (pdb *PDB) migration() error {
 func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 	var complited bool
 
-	err := pdb.pool.QueryRow(context.Background(), "SELECT complited FROM diadoc_files WHERE id=$1", d.FileId).Scan(&complited)
+	err := pdb.pool.QueryRow(context.Background(), "SELECT complited FROM diadoc_files WHERE id=$1", d.FileID).Scan(&complited)
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
 		_, err := pdb.pool.Exec(
 			context.Background(),
 			"INSERT INTO diadoc_files (id, form_version, prog_version, complited, invoce_number, document_date, seller, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-			d.FileId, d.FormVer, d.ProgVer, false, d.Document.Invoice.Number, d.Document.Invoice.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
+			d.FileID, d.FormVer, d.ProgVer, false, d.Document.Invoice.Number, d.Document.Invoice.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
 			slog.Error(fmt.Sprintf("Ошибка при записи документа в базу данных: %s", err.Error()))
 			return err
-		} else {
-			slog.Debug("Создана запись в БД для документа")
-			return pdb.insertDocumentTable(d)
 		}
+
+		slog.Debug("Создана запись в БД для документа")
+		return pdb.insertDocumentTable(d)
+
 	case err == nil && !complited:
 		return pdb.insertDocumentTable(d)
 	case err == nil && complited:
-		slog.Warn(fmt.Sprintf("Документ %s обработан ранее. Будет проущен", d.FileId))
+		slog.Warn(fmt.Sprintf("Документ %s обработан ранее. Будет проущен", d.FileID))
 	default:
 		slog.Error(fmt.Sprintf("Ошибка получения id документа: %s", err.Error()))
 		return err
@@ -84,7 +85,7 @@ func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 }
 
 func (pdb *PDB) insertDocumentTable(d *DiaDocXML) error {
-	slog.Info(fmt.Sprintf("Добавление данных товара из документа %s в базу данных", d.FileId))
+	slog.Info(fmt.Sprintf("Добавление данных товара из документа %s в базу данных", d.FileID))
 
 	tx, err := pdb.pool.Begin(context.Background())
 	if err != nil {
@@ -100,24 +101,25 @@ func (pdb *PDB) insertDocumentTable(d *DiaDocXML) error {
 		_, err := tx.Exec(
 			context.Background(),
 			"INSERT INTO diadoc_products (id, name, count, price, file_id, timestamp) VALUES ($1, $2, $3, $4, $5, $6)",
-			p.ExtInfo.Code, p.Name, p.Count, price, d.FileId, time.Now().UTC().Format("2006-01-02 03:04:05"),
+			p.ExtInfo.Code, p.Name, p.Count, price, d.FileID, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
 			slog.Error(fmt.Sprintf("Ошибка записи товара в базу данных: %s", err.Error()))
 			return err
 		}
 	}
-	_, err = tx.Exec(context.Background(), "UPDATE diadoc_files SET complited=$2 WHERE id=$1", d.FileId, true)
+	_, err = tx.Exec(context.Background(), "UPDATE diadoc_files SET complited=$2 WHERE id=$1", d.FileID, true)
 	if err != nil {
 		slog.Error(fmt.Sprintf("Ошибка при обновлении документа в базе данных: %s", err.Error()))
 		return err
-	} else {
-		if err := tx.Commit(context.Background()); err != nil {
-			slog.Error(fmt.Sprintf("Ошибка при коммите изменений: %s", err.Error()))
-			return err
-		} else {
-			slog.Info(fmt.Sprintf("Документ %s успешно добавлен в БД", d.FileId))
-		}
 	}
+
+	if err := tx.Commit(context.Background()); err != nil {
+		slog.Error(fmt.Sprintf("Ошибка при коммите изменений: %s", err.Error()))
+		return err
+	}
+
+	slog.Info(fmt.Sprintf("Документ %s успешно добавлен в БД", d.FileID))
+
 	return nil
 }
