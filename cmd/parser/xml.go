@@ -29,9 +29,13 @@ type DiaDocDocumentDate struct {
 
 // DiadockDocumentInvoiceXML - описывает Счет фактуру
 type DiadockDocumentInvoiceXML struct {
-	XMLName xml.Name           `xml:"СвСчФакт"`
-	Number  string             `xml:"НомерСчФ,attr"`
-	Date    DiaDocDocumentDate `xml:"ДатаСчФ,attr"`
+	XMLName     xml.Name `xml:"СвСчФакт"`
+	Number      string
+	NumberV5_01 string `xml:"НомерСчФ,attr"`
+	NumberV5_03 string `xml:"НомерДок,attr"`
+	Date        DiaDocDocumentDate
+	DateV5_01   DiaDocDocumentDate `xml:"ДатаСчФ,attr"`
+	DateV5_03   DiaDocDocumentDate `xml:"ДатаДок,attr"`
 }
 
 // UnmarshalXMLAttr распознает дату и переводит её в тип Time
