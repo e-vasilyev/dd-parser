@@ -62,7 +62,7 @@ func (pdb *PDB) insertDocument(d *DiaDocXML) error {
 	case errors.Is(err, pgx.ErrNoRows):
 		_, err := pdb.pool.Exec(
 			context.Background(),
-			"INSERT INTO diadoc_files (id, form_version, prog_version, complited, invoce_number, document_date, seller, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+			"INSERT INTO diadoc_files (id, form_version, prog_version, complited, invoice_number, document_date, seller, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
 			d.FileID, d.FormVer, d.ProgVer, false, d.Document.Invoice.Number, d.Document.Invoice.Date.Format("2006-01-02"), d.Document.Seller, time.Now().UTC().Format("2006-01-02 03:04:05"),
 		)
 		if err != nil {
