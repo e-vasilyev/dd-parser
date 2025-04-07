@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-var supportedVersion [2]string = [2]string{"5.01", "5.03"}
-
 // DiaDocXML - основное описание структуры XML файла
 type DiaDocXML struct {
 	XMLName  xml.Name          `xml:"Файл"`
