@@ -8,7 +8,7 @@ import (
 // DiaDocXML - основное описание структуры XML файла
 type DiaDocXML struct {
 	XMLName  xml.Name          `xml:"Файл"`
-	FileId   string            `xml:"ИдФайл,attr"`
+	FileID   string            `xml:"ИдФайл,attr"`
 	FormVer  string            `xml:"ВерсФорм,attr"`
 	ProgVer  string            `xml:"ВерсПрог,attr"`
 	Document DiaDocDocumentXML `xml:"Документ"`
@@ -27,6 +27,7 @@ type DiaDocDocumentDate struct {
 	time.Time
 }
 
+// DiadockDocumentInvoiceXML - описывает Счет фактуру
 type DiadockDocumentInvoiceXML struct {
 	XMLName xml.Name           `xml:"СвСчФакт"`
 	Number  string             `xml:"НомерСчФ,attr"`
@@ -44,7 +45,7 @@ func (dd *DiaDocDocumentDate) UnmarshalXMLAttr(attr xml.Attr) error {
 	return nil
 }
 
-// - описание позиции товара
+// DiaDocProductXML - описание позиции товара
 type DiaDocProductXML struct {
 	XMLName    xml.Name             `xml:"СведТов"`
 	Name       string               `xml:"НаимТов,attr"`
@@ -53,6 +54,7 @@ type DiaDocProductXML struct {
 	ExtInfo    DiadocProductExtInfo `xml:"ДопСведТов"`
 }
 
+// DiadocProductExtInfo - описание дополнительный сведений по товару
 type DiadocProductExtInfo struct {
 	XMLName xml.Name `xml:"ДопСведТов"`
 	Code    string   `xml:"КодТов,attr"`
