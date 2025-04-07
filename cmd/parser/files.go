@@ -3,6 +3,7 @@ package main
 import (
 	"archive/zip"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -98,5 +99,25 @@ func parseXML(file *zip.File) (*DiaDocXML, error) {
 		return nil, err
 	}
 
+	if err := prepareVersion(diadoc); err != nil {
+		return nil, err
+	}
+
 	return diadoc, nil
+}
+
+// prepareVersion - подготоваливает документ различных версий
+func prepareVersion(diadoc *DiaDocXML) error {
+	switch diadoc.FormVer {
+	case "5.01":
+		diadoc.Document.Invoice.Number = diadoc.Document.Invoice.NumberV5_01
+		diadoc.Document.Invoice.Date = diadoc.Document.Invoice.DateV5_01
+	case "5.03":
+		diadoc.Document.Invoice.Number = diadoc.Document.Invoice.NumberV5_03
+		diadoc.Document.Invoice.Date = diadoc.Document.Invoice.DateV5_03
+	default:
+		return errors.New("не поддерживаемая версия документа")
+	}
+
+	return nil
 }
